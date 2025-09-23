@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public final class ConnectionManager {
-    // Si estás en local, esto suele bastar:
     private static final String URL =
         "jdbc:mysql://localhost:3306/Cine_DB"
       + "?useSSL=false"

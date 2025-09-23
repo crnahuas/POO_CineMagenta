@@ -57,7 +57,6 @@ public class ConsoleApp {
         }
     }
 
-    /** Solicita datos por consola, valida y hace INSERT en Cartelera. */
     private static void agregarPelicula(BufferedReader in) throws SQLException {
         try {
             String titulo = prompt(in, "Título: ");
@@ -99,7 +98,6 @@ public class ConsoleApp {
         }
     }
 
-    /** Lista todas las películas ordenadas por título. */
     private static void listarPeliculas() {
         String sql = "SELECT id, titulo, director, anio, duracion, genero FROM Cartelera ORDER BY titulo";
         try (Connection c = ConnectionManager.get();
@@ -124,8 +122,6 @@ public class ConsoleApp {
             System.err.println("Error BD al listar: " + e.getMessage());
         }
     }
-
-    // ==== Helpers de entrada y validación ====
 
     private static String prompt(BufferedReader in, String label) throws IOException {
         while (true) {
