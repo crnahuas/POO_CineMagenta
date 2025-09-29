@@ -18,6 +18,7 @@ public class ConsoleApp {
 
     public static void main(String[] args) {
         PeliculaDAO dao = new PeliculaDAO();
+
         try (BufferedReader in = new BufferedReader(new InputStreamReader(System.in))) {
             while (true) {
                 System.out.println("\n==============================");
@@ -30,6 +31,7 @@ public class ConsoleApp {
                 System.out.println("5) Eliminar por ID");
                 System.out.println("0) Salir");
                 System.out.print("Opción: ");
+
                 String op = in.readLine();
                 if (op == null) {
                     break;
@@ -59,6 +61,7 @@ public class ConsoleApp {
         }
     }
 
+    
     private static void agregar(BufferedReader in, PeliculaDAO dao) {
         try {
             Pelicula p = leerFormulario(in, null);
@@ -88,14 +91,9 @@ public class ConsoleApp {
         try {
             System.out.print("Texto (título/director/género): ");
             String txt = in.readLine();
-            System.out.print("Ordenar por (titulo|año|duracion) [titulo]: ");
-            String order = in.readLine();
-            if (order == null || order.isBlank()) {
-                order = "titulo";
-            }
             try {
-                var lista = dao.buscarPorTexto(txt, order);
-                imprimir(lista, "=== Resultados ===");
+                var lista = dao.buscarPorTexto(txt);
+                imprimir(lista, "=== Resultados (id asc) ===");
             } catch (SQLException e) {
                 System.out.println("Error BD en búsqueda: " + e.getMessage());
             }
@@ -170,12 +168,12 @@ public class ConsoleApp {
         }
     }
 
-    // === Helpers ===
+    
     private static Pelicula leerFormulario(BufferedReader in, Pelicula base) throws IOException {
-        String titulo = promptDefault(in, "Título", base == null ? null : base.getTitulo());
-        String director = promptDefault(in, "Director", base == null ? null : base.getDirector());
-        int anio = promptIntDefault(in, "Año (ej: 2025)", 1888, 2100, base == null ? 2024 : base.getAnio());
-        int duracion = promptIntDefault(in, "Duración (ej: 120)", 1, 600, base == null ? 120 : base.getDuracion());
+        String titulo = promptDefault(in, "Título: ", base == null ? null : base.getTitulo());
+        String director = promptDefault(in, "Director: ", base == null ? null : base.getDirector());
+        int anio = promptIntDefault(in, "Año (ej: 2020): ", 1888, 2100, base == null ? 2024 : base.getAnio());
+        int duracion = promptIntDefault(in, "Duración (ej: 120): ", 1, 600, base == null ? 120 : base.getDuracion());
         String genero = promptGeneroDefault(in, base == null ? null : base.getGenero());
         return new Pelicula(null, titulo, director, anio, duracion, genero);
     }
