@@ -21,7 +21,7 @@ public class ConsoleApp {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(System.in))) {
             while (true) {
                 System.out.println("\n==============================");
-                System.out.println(" Magenta - Cartelera ");
+                System.out.println(" Cine Magenta - Cartelera ");
                 System.out.println("==============================");
                 System.out.println("1) Agregar película");
                 System.out.println("2) Ver lista");
@@ -88,7 +88,7 @@ public class ConsoleApp {
         try {
             System.out.print("Texto (título/director/género): ");
             String txt = in.readLine();
-            System.out.print("Ordenar por (titulo|anio|duracion) [titulo]: ");
+            System.out.print("Ordenar por (titulo|año|duracion) [titulo]: ");
             String order = in.readLine();
             if (order == null || order.isBlank()) {
                 order = "titulo";
@@ -174,8 +174,8 @@ public class ConsoleApp {
     private static Pelicula leerFormulario(BufferedReader in, Pelicula base) throws IOException {
         String titulo = promptDefault(in, "Título", base == null ? null : base.getTitulo());
         String director = promptDefault(in, "Director", base == null ? null : base.getDirector());
-        int anio = promptIntDefault(in, "Año (1888..2100)", 1888, 2100, base == null ? 2024 : base.getAnio());
-        int duracion = promptIntDefault(in, "Duración (1..600)", 1, 600, base == null ? 120 : base.getDuracion());
+        int anio = promptIntDefault(in, "Año (ej: 2025)", 1888, 2100, base == null ? 2024 : base.getAnio());
+        int duracion = promptIntDefault(in, "Duración (ej: 120)", 1, 600, base == null ? 120 : base.getDuracion());
         String genero = promptGeneroDefault(in, base == null ? null : base.getGenero());
         return new Pelicula(null, titulo, director, anio, duracion, genero);
     }
