@@ -18,20 +18,18 @@ public class ConsoleApp {
 
     public static void main(String[] args) {
         PeliculaDAO dao = new PeliculaDAO();
-
         try (BufferedReader in = new BufferedReader(new InputStreamReader(System.in))) {
             while (true) {
                 System.out.println("\n==============================");
-                System.out.println(" Cine Magenta - Cartelera ");
+                System.out.println(" Magenta - Cartelera (CLI) S7 ");
                 System.out.println("==============================");
                 System.out.println("1) Agregar película");
-                System.out.println("2) Ver lista");
-                System.out.println("3) Buscar");
+                System.out.println("2) Ver lista (id asc)");
+                System.out.println("3) Buscar (LIKE, id asc)");
                 System.out.println("4) Modificar por ID");
                 System.out.println("5) Eliminar por ID");
                 System.out.println("0) Salir");
                 System.out.print("Opción: ");
-
                 String op = in.readLine();
                 if (op == null) {
                     break;
@@ -61,7 +59,6 @@ public class ConsoleApp {
         }
     }
 
-    
     private static void agregar(BufferedReader in, PeliculaDAO dao) {
         try {
             Pelicula p = leerFormulario(in, null);
@@ -81,7 +78,7 @@ public class ConsoleApp {
     private static void listar(PeliculaDAO dao) {
         try {
             var lista = dao.listarTodos();
-            imprimir(lista, "=== Cartelera ===");
+            imprimir(lista, "=== Cartelera (id asc) ===");
         } catch (SQLException e) {
             System.out.println("Error BD al listar: " + e.getMessage());
         }
@@ -112,10 +109,12 @@ public class ConsoleApp {
                 System.out.println("Error BD al buscar: " + e.getMessage());
                 return;
             }
+
             if (opt.isEmpty()) {
                 System.out.println("No existe película con ID " + id);
                 return;
             }
+
             Pelicula actual = opt.get();
             System.out.printf("Actual: %s (%d) | Dir: %s | %d min | %s%n",
                     actual.getTitulo(), actual.getAnio(), actual.getDirector(), actual.getDuracion(), actual.getGenero());
@@ -145,10 +144,12 @@ public class ConsoleApp {
                 System.out.println("Error BD al buscar: " + e.getMessage());
                 return;
             }
+
             if (opt.isEmpty()) {
                 System.out.println("No existe película con ID " + id);
                 return;
             }
+
             Pelicula p = opt.get();
             System.out.printf("¿Eliminar \"%s\" (%d) | Dir: %s | %d min | %s ? (S/N): ",
                     p.getTitulo(), p.getAnio(), p.getDirector(), p.getDuracion(), p.getGenero());
@@ -168,17 +169,17 @@ public class ConsoleApp {
         }
     }
 
-    
+    // === Helpers ===
     private static Pelicula leerFormulario(BufferedReader in, Pelicula base) throws IOException {
-        String titulo = promptDefault(in, "Título: ", base == null ? null : base.getTitulo());
-        String director = promptDefault(in, "Director: ", base == null ? null : base.getDirector());
-        int anio = promptIntDefault(in, "Año (ej: 2020): ", 1888, 2100, base == null ? 2024 : base.getAnio());
-        int duracion = promptIntDefault(in, "Duración (ej: 120): ", 1, 600, base == null ? 120 : base.getDuracion());
+        String titulo = promptDefault(in, "Título", base == null ? null : base.getTitulo());
+        String director = promptDefault(in, "Director", base == null ? null : base.getDirector());
+        int anio = promptIntDefault(in, "Año (1888..2100)", 1888, 2100, base == null ? 2024 : base.getAnio());
+        int duracion = promptIntDefault(in, "Duración (1..600)", 1, 600, base == null ? 120 : base.getDuracion());
         String genero = promptGeneroDefault(in, base == null ? null : base.getGenero());
         return new Pelicula(null, titulo, director, anio, duracion, genero);
     }
 
-    private static void imprimir(List<Pelicula> lista, String titulo) {
+    private static void imprimir(java.util.List<Pelicula> lista, String titulo) {
         System.out.println("\n" + titulo);
         if (lista.isEmpty()) {
             System.out.println("(Sin registros)");
@@ -242,7 +243,8 @@ public class ConsoleApp {
     }
 
     private static String promptGeneroDefault(BufferedReader in, String def) throws IOException {
-        System.out.println("Géneros: " + String.join(", ", GENEROS));
+        var generos = Arrays.asList("ACCION", "DRAMA", "COMEDIA", "TERROR", "ANIMACION", "CIENCIA_FICCION", "AVENTURA", "ROMANCE");
+        System.out.println("Géneros: " + String.join(", ", generos));
         while (true) {
             System.out.print("Género" + (def != null ? " [" + def + "]" : "") + ": ");
             String g = in.readLine();
@@ -252,7 +254,7 @@ public class ConsoleApp {
                 }
             } else {
                 g = g.trim().toUpperCase();
-                if (GENEROS.contains(g)) {
+                if (generos.contains(g)) {
                     return g;
                 }
             }
