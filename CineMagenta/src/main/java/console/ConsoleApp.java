@@ -169,7 +169,6 @@ public class ConsoleApp {
         }
     }
 
-    // === Helpers ===
     private static Pelicula leerFormulario(BufferedReader in, Pelicula base) throws IOException {
         String titulo = promptDefault(in, "Título", base == null ? null : base.getTitulo());
         String director = promptDefault(in, "Director", base == null ? null : base.getDirector());

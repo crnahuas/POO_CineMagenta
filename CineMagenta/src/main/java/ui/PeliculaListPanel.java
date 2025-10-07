@@ -29,11 +29,9 @@ public class PeliculaListPanel extends JPanel {
     private final PeliculaTableModel model = new PeliculaTableModel();
     private final JTable table = new JTable(model);
 
-    // Buscador LIKE (título/director/género)
     private final JTextField txtBuscar = new JTextField(18);
     private final JButton btnBuscar = new JButton("Buscar");
 
-    // Filtros S8
     private final JComboBox<String> cboGenero = new JComboBox<>(new String[]{
         "TODOS", "ACCION", "DRAMA", "COMEDIA", "TERROR", "ANIMACION", "CIENCIA_FICCION", "AVENTURA", "ROMANCE"
     });
@@ -45,13 +43,11 @@ public class PeliculaListPanel extends JPanel {
     public PeliculaListPanel() {
         setLayout(new BorderLayout(8, 8));
 
-        // Fila superior (búsqueda texto)
         JPanel top1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         top1.add(new JLabel("Buscar (título/director/género): "));
         top1.add(txtBuscar);
         top1.add(btnBuscar);
 
-        // Fila filtros (género + rango años)
         JPanel top2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         top2.add(new JLabel("Género:"));
         top2.add(cboGenero);
@@ -71,21 +67,16 @@ public class PeliculaListPanel extends JPanel {
         table.setAutoCreateRowSorter(false); // orden lo define SQL (id ASC)
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // Tooltips
         txtDesde.setToolTipText("Predeterminado 1888 si vacío");
         txtHasta.setToolTipText("Predeterminado 2100 si vacío");
 
-        // Listeners
         btnBuscar.addActionListener(e -> buscarTexto());
         btnFiltrar.addActionListener(e -> aplicarFiltros());
         btnLimpiar.addActionListener(e -> limpiarFiltros());
 
-        cargarTabla(); // carga inicial
+        cargarTabla();
     }
 
-    /**
-     * Carga completa (sin filtros)
-     */
     public void cargarTabla() {
         try {
             List<Pelicula> lista = dao.listarTodos(); // ORDER BY id ASC
@@ -95,23 +86,16 @@ public class PeliculaListPanel extends JPanel {
         }
     }
 
-    /**
-     * Buscar por texto (LIKE) manteniendo filtros de año y género actuales
-     */
     private void buscarTexto() {
-        aplicarFiltros(); // reutilizamos la misma lógica combinada
+        aplicarFiltros();
     }
 
-    /**
-     * Filtra por género + rango + texto
-     */
     private void aplicarFiltros() {
         String genero = (String) cboGenero.getSelectedItem();
         Integer desde = parseEntero(txtDesde.getText().trim());
         Integer hasta = parseEntero(txtHasta.getText().trim());
         String texto = txtBuscar.getText();
 
-        // Defaults y validaciones
         int d = (desde == null ? 1888 : desde);
         int h = (hasta == null ? 2100 : hasta);
         if (d < 1888) {
@@ -133,24 +117,15 @@ public class PeliculaListPanel extends JPanel {
         }
     }
 
-    /**
-     * Limpia filtros y recarga todo
-     */
     private void limpiarFiltros() {
         txtBuscar.setText("");
-        cboGenero.setSelectedIndex(0); // TODOS
-        txtDesde.setText(""); // mostrar vacío → toma 1888 en aplicarFiltros()
-        txtHasta.setText(""); // vacío → 2100
+        cboGenero.setSelectedIndex(0);
+        txtDesde.setText(""); 
+        txtHasta.setText(""); 
         cargarTabla();
     }
 
-    // ===== Helpers =====
-    /**
-     * Campo entero "suave": permite escribir libremente; validamos al usar. Sin
-     * separadores.
-     */
     private static JFormattedTextField createLenientIntField(int initial, int columns) {
-        // Formato entero sin agrupación (independiente del locale), pero 'lenient' al escribir
         java.text.DecimalFormatSymbols sym = java.text.DecimalFormatSymbols.getInstance(java.util.Locale.ROOT);
         java.text.DecimalFormat df = new java.text.DecimalFormat("#", sym);
         df.setGroupingUsed(false);
@@ -163,7 +138,6 @@ public class PeliculaListPanel extends JPanel {
         f.setColumns(columns);
         f.setText(String.valueOf(initial));
 
-        // Solo dígitos (evita letras/espacios)
         ((AbstractDocument) f.getDocument()).setDocumentFilter(new DocumentFilter() {
             @Override
             public void insertString(FilterBypass fb, int offs, String str, AttributeSet a) throws BadLocationException {
@@ -180,7 +154,6 @@ public class PeliculaListPanel extends JPanel {
             }
         });
 
-        // Select-all al enfocar
         f.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {
@@ -206,7 +179,6 @@ public class PeliculaListPanel extends JPanel {
         JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
-    // Acciones existentes de CRUD desde toolbar del MainFrame (se mantienen):
     public void accionAgregar() {
         PeliculaFormDialog dlg = new PeliculaFormDialog();
         Pelicula p = dlg.mostrarParaCrear(this);
@@ -215,7 +187,7 @@ public class PeliculaListPanel extends JPanel {
         }
         try {
             dao.crear(p);
-            aplicarFiltros(); // refresca con filtros actuales
+            aplicarFiltros();
             JOptionPane.showMessageDialog(this, "Película agregada con ID " + p.getId());
         } catch (SQLException ex) {
             if (esDuplicado(ex)) {
@@ -244,7 +216,7 @@ public class PeliculaListPanel extends JPanel {
 
         try {
             editada.setId(actual.getId());
-            dao.actualizar(editada); // transacción en DAO
+            dao.actualizar(editada);
             aplicarFiltros();
             mostrarInfo("Película actualizada.");
         } catch (SQLException ex) {
@@ -276,7 +248,7 @@ public class PeliculaListPanel extends JPanel {
         }
 
         try {
-            dao.eliminar(p.getId()); // transacción en DAO
+            dao.eliminar(p.getId());
             aplicarFiltros();
             mostrarInfo("Película eliminada.");
         } catch (SQLException ex) {

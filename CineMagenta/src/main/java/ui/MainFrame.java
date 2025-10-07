@@ -19,7 +19,6 @@ public class MainFrame extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Toolbar
         JToolBar tb = new JToolBar();
         tb.setFloatable(false);
         JButton btnAgregar = new JButton("Agregar");
@@ -41,7 +40,6 @@ public class MainFrame extends JFrame {
         btnEliminar.addActionListener(e -> listPanel.accionEliminarSeleccion());
         btnRefrescar.addActionListener(e -> listPanel.cargarTabla());
 
-        // Menú Archivo → Salir
         JMenuBar mb = new JMenuBar();
         JMenu archivo = new JMenu("Archivo");
         JMenuItem salir = new JMenuItem("Salir");

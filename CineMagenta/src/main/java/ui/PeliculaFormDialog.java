@@ -32,8 +32,7 @@ public class PeliculaFormDialog extends JDialog {
 
     private final JTextField txtTitulo = new JTextField(25);
     private final JTextField txtDirector = new JTextField(25);
-
-    // Campos numéricos "lenient": sin miles, permiten escribir libremente; validamos al guardar
+    
     private final JFormattedTextField txtAnio = createLenientIntFieldNoGrouping(yearNow(), 4);
     private final JFormattedTextField txtDuracion = createLenientIntFieldNoGrouping(60, 3);
 
@@ -80,7 +79,6 @@ public class PeliculaFormDialog extends JDialog {
             dispose();
         });
 
-        // Enter = Guardar, Esc = Cancelar
         getRootPane().setDefaultButton(btnGuardar);
         getRootPane().registerKeyboardAction(
                 e -> {
@@ -174,7 +172,6 @@ public class PeliculaFormDialog extends JDialog {
         cboGenero.setSelectedItem(p.getGenero());
     }
 
-    // ==== Helpers ====
     private static void addRow(JPanel panel, GridBagConstraints gc, int row, String label, JComponent field) {
         gc.gridx = 0;
         gc.gridy = row;
@@ -217,7 +214,6 @@ public class PeliculaFormDialog extends JDialog {
             }
         });
 
-        // Select-all al enfocar
         f.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {

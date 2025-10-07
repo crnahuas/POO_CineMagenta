@@ -31,9 +31,6 @@ public class PeliculaDAO {
         }
     }
 
-    /**
-     * Lista todo ordenado por id ASC.
-     */
     public List<Pelicula> listarTodos() throws SQLException {
         String sql = "SELECT id, titulo, director, anio, duracion, genero FROM Cartelera ORDER BY id ASC";
         try (Connection c = ConnectionManager.get(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -45,9 +42,6 @@ public class PeliculaDAO {
         }
     }
 
-    /**
-     * Búsqueda LIKE por título/director/género, orden id ASC.
-     */
     public List<Pelicula> buscarPorTexto(String texto) throws SQLException {
         String like = "%" + (texto == null ? "" : texto.trim()) + "%";
         String sql = "SELECT id, titulo, director, anio, duracion, genero "
@@ -69,7 +63,6 @@ public class PeliculaDAO {
     }
 
     public List<Pelicula> filtrar(String genero, Integer desde, Integer hasta, String texto) throws SQLException {
-        // Normalizar entradas
         String gen = (genero == null ? "TODOS" : genero.trim().toUpperCase());
         int anioDesde = (desde == null ? 1888 : desde);
         int anioHasta = (hasta == null ? 2100 : hasta);
@@ -86,12 +79,11 @@ public class PeliculaDAO {
         try (Connection c = ConnectionManager.get(); PreparedStatement ps = c.prepareStatement(sql)) {
 
             int i = 1;
-            ps.setString(i++, gen);    // ?='TODOS'
-            ps.setString(i++, gen);    // genero=?
+            ps.setString(i++, gen); 
+            ps.setString(i++, gen);    
             ps.setInt(i++, anioDesde);
             ps.setInt(i++, anioHasta);
 
-            // texto: paso cadena vacía para desactivar bloque LIKE si no hay texto
             String raw = (texto == null ? "" : texto.trim());
             ps.setString(i++, raw);
             ps.setString(i++, like);
@@ -121,9 +113,6 @@ public class PeliculaDAO {
         }
     }
 
-    /**
-     * UPDATE con transacción + validación de existencia.
-     */
     public void actualizar(Pelicula p) throws SQLException {
         if (p.getId() == null) {
             throw new IllegalArgumentException("ID requerido para actualizar");
@@ -148,9 +137,6 @@ public class PeliculaDAO {
         }
     }
 
-    /**
-     * DELETE con transacción + validación de existencia.
-     */
     public void eliminar(int id) throws SQLException {
         String sql = "DELETE FROM Cartelera WHERE id=?";
         try (Connection c = ConnectionManager.getTx(); PreparedStatement ps = c.prepareStatement(sql)) {
@@ -164,7 +150,6 @@ public class PeliculaDAO {
         }
     }
 
-    // --- helpers ---
     private Pelicula map(ResultSet rs) throws SQLException {
         return new Pelicula(
                 rs.getInt("id"),
